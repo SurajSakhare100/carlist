@@ -1,3 +1,4 @@
+import { Admin, AuditLog, Listing } from "@/types/car"
 import Database from "better-sqlite3"
 import path from "path"
 
@@ -122,3 +123,116 @@ export function initializeDatabase() {
     insertListing.run(...listing)
   })
 }
+export const listingQueries = {
+  getAll: (page = 1, limit = 10, status?: string) => {
+    const offset = (page - 1) * limit
+    let query = "SELECT * FROM listings"
+    let countQuery = "SELECT COUNT(*) as total FROM listings"
+    const params: any[] = []
+
+    if (status && status !== "all") {
+      query += " WHERE status = ?"
+      countQuery += " WHERE status = ?"
+      params.push(status)
+    }
+
+    query += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
+    const listings = db.prepare(query).all(...params, limit, offset) as Listing[]
+    const total = (db.prepare(countQuery).get(...params) as { total: number }).total
+
+    return { listings, total, totalPages: Math.ceil(total / limit) }
+  },
+
+  getById: (id: number) => {
+    return db.prepare("SELECT * FROM listings WHERE id = ?").get(id) as Listing | undefined
+  },
+
+  updateStatus: (id: number, status: string, adminEmail: string) => {
+    const listing = listingQueries.getById(id)
+    if (!listing) return null
+
+    const oldStatus = listing.status
+    db.prepare("UPDATE listings SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(status, id)
+
+    // Log the action
+    auditQueries.create({
+      listing_id: id,
+      admin_email: adminEmail,
+      action: `Status changed from ${oldStatus} to ${status}`,
+      old_status: oldStatus,
+      new_status: status,
+      notes: null,
+    })
+
+    return listingQueries.getById(id)
+  },
+
+  update: (id: number, data: Partial<Listing>, adminEmail: string) => {
+    const listing = listingQueries.getById(id)
+    if (!listing) return null
+
+    const updateFields = []
+    const values = []
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== "id" && key !== "created_at" && key !== "updated_at") {
+        updateFields.push(`${key} = ?`)
+        values.push(value)
+      }
+    })
+
+    if (updateFields.length === 0) return listing
+
+    updateFields.push("updated_at = CURRENT_TIMESTAMP")
+    values.push(id)
+
+    const query = `UPDATE listings SET ${updateFields.join(", ")} WHERE id = ?`
+    db.prepare(query).run(...values)
+
+    auditQueries.create({
+      listing_id: id,
+      admin_email: adminEmail,
+      action: "Listing updated",
+      old_status: null,
+      new_status: null,
+      notes: `Updated fields: ${Object.keys(data).join(", ")}`,
+    })
+
+    return listingQueries.getById(id)
+  },
+}
+
+export const auditQueries = {
+  create: (data: Omit<AuditLog, "id" | "created_at">) => {
+    const stmt = db.prepare(`
+      INSERT INTO audit_logs (listing_id, admin_email, action, old_status, new_status, notes)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `)
+    return stmt.run(data.listing_id, data.admin_email, data.action, data.old_status, data.new_status, data.notes)
+  },
+
+  getAll: (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit
+    const logs = db
+      .prepare(`
+      SELECT al.*, l.title as listing_title 
+      FROM audit_logs al 
+      LEFT JOIN listings l ON al.listing_id = l.id 
+      ORDER BY al.created_at DESC 
+      LIMIT ? OFFSET ?
+    `)
+      .all(limit, offset)
+
+    const total = (db.prepare("SELECT COUNT(*) as total FROM audit_logs").get() as { total: number }).total
+
+    return { logs, total, totalPages: Math.ceil(total / limit) }
+  },
+}
+
+export const adminQueries = {
+  findByEmail: (email: string) => {
+    return db.prepare("SELECT * FROM admins WHERE email = ?").get(email) as Admin | undefined
+  },
+}
+
+export default db
