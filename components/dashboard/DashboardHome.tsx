@@ -13,8 +13,9 @@ import { Car, LogOut, Edit, Check, X, ChevronLeft, ChevronRight, Filter, Activit
 import Image from "next/image"
 import AuditLogsDialog from "@/components/AuditLogsDialog"
 import EditListingDialog from "@/components/EditListingDialog"
-import { DashboardClientProps } from "@/types/dashboard.s"
+import { DashboardClientProps } from "@/types/dashboard"
 import { Listing } from "@/types/car"
+import { useAuth } from "@/contexts/auth-context"
 
 
 
@@ -24,6 +25,7 @@ export default function DashboardHome({
     initialTotalPages,
     currentPage,
     currentStatus,
+    admin,
 }: DashboardClientProps) {
     const [listings, setListings] = useState<Listing[] | null>(initialListings)
     const [total, setTotal] = useState(initialTotal)
@@ -37,6 +39,7 @@ export default function DashboardHome({
     const router = useRouter()
     const searchParams = useSearchParams()
 
+    const { logout } = useAuth();
     const fetchListings = async (newPage: number = page, newStatus: string = status) => {
         setLoading(true)
         try {
@@ -162,8 +165,8 @@ export default function DashboardHome({
                         </div>
                         <div className="flex items-center space-x-4">
                            
-                            <span className="text-sm text-gray-600">Welcome, admin</span>
-                            <Button variant="outline" size="sm">
+                            <span className="text-sm text-gray-600">Welcome, {admin.name}</span>
+                            <Button variant="outline" size="sm" onClick={logout}>
                                 <LogOut className="h-4 w-4 mr-2" />
                                 Logout
                             </Button>

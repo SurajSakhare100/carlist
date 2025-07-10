@@ -70,7 +70,7 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@carrentals.com"
+                  placeholder="admin@carlist.com"
                   required
                 />
               </div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
               <p className="text-sm text-blue-800">
                 <strong>Demo Credentials:</strong>
                 <br />
-                Email: admin@carrentals.com
+                Email: admin@carlist.com
                 <br />
                 Password: admin123
               </p>
