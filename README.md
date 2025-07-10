@@ -34,3 +34,33 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# CarList
+
+## Local Development: Using SQLite
+
+This project uses SQLite for local development. All data (listings, admins, audit logs) is stored in `database.sqlite` in the project root.
+
+### Setup
+1. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+2. **Run the development server:**
+   ```sh
+   npm run dev
+   ```
+
+### Troubleshooting (Windows)
+If you see errors about `better-sqlite3` bindings:
+- Delete `node_modules` and `package-lock.json`.
+- Reinstall dependencies:
+  ```sh
+  npm install
+  ```
+- If issues persist, rebuild the module:
+  ```sh
+  npm rebuild better-sqlite3
+  ```
+
+> SQLite is only used for local development. In production, listings are stored in localStorage on the client.

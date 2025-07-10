@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center">
-            <Car className="h-12 w-12 text-blue-600" />
+            <Car className="h-12 w-12 text-orange-600" />
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Admin Dashboard</h2>
           <p className="mt-2 text-sm text-gray-600">Sign in to manage car rental listings</p>
@@ -92,8 +92,8 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="mt-4 p-4 bg-orange-50 rounded-lg">
+              <p className="text-sm text-orange-800">
                 <strong>Demo Credentials:</strong>
                 <br />
                 Email: admin@carlist.com

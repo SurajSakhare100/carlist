@@ -160,7 +160,7 @@ export default function DashboardHome({
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center">
-                            <Car className="h-8 w-8 text-blue-600 mr-3" />
+                            <Car className="h-8 w-8 text-orange-600 mr-3" />
                             <h1 className="text-xl font-semibold text-gray-900">Car Rental Admin Dashboard</h1>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -229,13 +229,13 @@ export default function DashboardHome({
                             
                          <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor="status-filter">Status:</Label>
+                                <Label  htmlFor="status-filter">Status:</Label>
                                 <Select value={status} onValueChange={(value: string) => fetchListings(1, value)}>
                                     <SelectTrigger className="w-32">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem  value="all">All</SelectItem>
                                         <SelectItem value="pending">Pending</SelectItem>
                                         <SelectItem value="approved">Approved</SelectItem>
                                         <SelectItem value="rejected">Rejected</SelectItem>
