@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { adminQueries, initializeDatabase } from "@/lib/db"
+import { adminQueries, initializeDatabase } from "@/lib/database"
 import { cookies } from "next/headers"
 
 // Initialize database on first API call

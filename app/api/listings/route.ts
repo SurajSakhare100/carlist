@@ -2,7 +2,6 @@ import { type NextRequest, NextResponse } from "next/server"
 import { listingQueries, initializeDatabase } from "@/lib/db"
 import { cookies } from "next/headers"
 
-initializeDatabase()
 
 async function getAdminFromSession() {
   const cookieStore = await cookies()

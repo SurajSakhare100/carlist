@@ -235,4 +235,5 @@ export const adminQueries = {
   },
 }
 
+initializeDatabase()
 export default db
