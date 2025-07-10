@@ -64,3 +64,13 @@ If you see errors about `better-sqlite3` bindings:
   ```
 
 > SQLite is only used for local development. In production, listings are stored in localStorage on the client.
+
+## Screenshots
+
+| Screenshot | Screenshot |
+|------------|------------|
+| ![Screenshot 1](https://github.com/user-attachments/assets/5fe2f9bf-7dc9-4e77-8945-27ad2404ba3d) | ![Screenshot 2](https://github.com/user-attachments/assets/c48fa608-a7c4-4c2d-854c-728bf5b76d2f) |
+| ![Screenshot 3](https://github.com/user-attachments/assets/d7ff4402-f12e-4674-9067-dde087a79c4d) | ![Screenshot 4](https://github.com/user-attachments/assets/ffcacd52-4e88-468b-83fb-2d719be4aedf) |
+| ![Screenshot 5](https://github.com/user-attachments/assets/0a92328a-92b1-412c-b451-f7b0fa412903) | ![Screenshot 6](https://github.com/user-attachments/assets/06ab731f-059b-4ad1-bc1f-2ed9e107c210) |
+
+
