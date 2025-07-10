@@ -34,7 +34,6 @@ export default function DashboardHome({
     const [editingListing, setEditingListing] = useState<Listing | null>(null)
     const [showAuditLogs, setShowAuditLogs] = useState(false)
     const [auditLogs, setAuditLogs] = useState<any[]>([])
-
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -162,19 +161,9 @@ export default function DashboardHome({
                             <h1 className="text-xl font-semibold text-gray-900">Car Rental Admin Dashboard</h1>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                    setShowAuditLogs(true)
-                                    fetchAuditLogs()
-                                }}
-                            >
-                                <Activity className="h-4 w-4 mr-2" />
-                                Audit Logs
-                            </Button>
+                           
                             <span className="text-sm text-gray-600">Welcome, admin</span>
-                            <Button variant="outline" size="sm" >
+                            <Button variant="outline" size="sm">
                                 <LogOut className="h-4 w-4 mr-2" />
                                 Logout
                             </Button>
@@ -225,15 +214,17 @@ export default function DashboardHome({
                     </Card>
                 </div>
 
-                <Card className="mb-6">
-                    <CardHeader>
-                        <CardTitle className="flex items-center">
-                            <Filter className="h-5 w-5 mr-2" />
-                            Filters
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex items-center space-x-4">
+               
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-2">
+                        <div className="space-y-1">
+                             <CardTitle>Car Rental Listings</CardTitle>
+                        <CardDescription>Manage and review car rental listings submitted by users</CardDescription>
+                       
+                        </div>
+                         <div className="flex items-center space-x-2">
+                            
+                         <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-2">
                                 <Label htmlFor="status-filter">Status:</Label>
                                 <Select value={status} onValueChange={(value: string) => fetchListings(1, value)}>
@@ -249,14 +240,22 @@ export default function DashboardHome({
                                 </Select>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Car Rental Listings</CardTitle>
-                        <CardDescription>Manage and review car rental listings submitted by users</CardDescription>
+                        <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-gray-600 hover:text-gray-700 bg-transparent"
+                                onClick={() => {
+                                    setShowAuditLogs(true)
+                                    fetchAuditLogs()
+                                }}
+                            >
+                                <Activity className="h-4 w-4 mr-2" />
+                                Audit Logs
+                            </Button>
+                         </div>
                     </CardHeader>
+                    
+
                     <CardContent>
                         {loading ? (
                             <div className="flex justify-center py-8">

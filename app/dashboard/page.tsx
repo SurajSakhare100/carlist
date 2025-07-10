@@ -1,13 +1,33 @@
 import {  initializeDatabase, listingQueries } from "@/lib/db"
-import DashboardClient from "@/components/dashboard/DashboardHome"
 import { useEffect } from "react"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 import DashboardHome from "@/components/dashboard/DashboardHome"
 
+async function getAdminFromSession() {
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get("admin-session")
+
+  if (!sessionCookie) {
+    return null
+  }
+
+  try {
+    return JSON.parse(sessionCookie.value)
+  } catch {
+    return null
+  }
+}
 export default async function DashboardPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+    const admin = await getAdminFromSession()
+
+  if (!admin) {
+    redirect("/login")
+  }
 
 
   const params = await searchParams
@@ -24,12 +44,7 @@ export default async function DashboardPage({
       initialTotalPages={totalPages}
       currentPage={page}
       currentStatus={status}
-      admin={{
-        id: 1, 
-        email: "admin@carlist.com",
-        name: "Admin User",
-        created_at: new Date().toISOString(),
-      }}
+      admin={admin}
     />
   )
 }
