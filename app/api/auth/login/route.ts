@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { adminQueries, initializeDatabase } from "@/lib/db"
+import { adminQueries } from "@/lib/db"
 import { cookies } from "next/headers"
 
 // Initialize database on first API call
-initializeDatabase()
+// initializeDatabase() // Removed, handled in lib/db.ts
 
 export async function POST(request: NextRequest) {
   try {
