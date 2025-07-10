@@ -39,8 +39,8 @@ export default function EditListingDialog({
     if (!listing) return null
 
     return (
-        <Dialog open={!!listing} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <Dialog open={!!listing} onOpenChange={onClose} >
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-white">
                 <DialogHeader>
                     <DialogTitle>Edit Listing</DialogTitle>
                     <DialogDescription>Make changes to the listing details below.</DialogDescription>

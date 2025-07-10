@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -34,11 +35,99 @@ export default function DashboardHome({
     const [showAuditLogs, setShowAuditLogs] = useState(false)
     const [auditLogs, setAuditLogs] = useState<any[]>([])
 
+    const router = useRouter()
+    const searchParams = useSearchParams()
 
-   const fetchListings = async (page: number, status: string) => {}
-   const fetchAuditLogs = async () => {}
-   const handleStatusChange = async (listingId: number, newStatus: string) => {}
-   const handleEditListing = async (data: Partial<Listing>) => {}
+    const fetchListings = async (newPage: number = page, newStatus: string = status) => {
+        setLoading(true)
+        try {
+            const params = new URLSearchParams({
+                page: newPage.toString(),
+                limit: "10",
+                ...(newStatus !== "all" && { status: newStatus }),
+            })
+
+            const response = await fetch(`/api/listings?${params}`)
+            if (response.ok) {
+                const data = await response.json()
+                setListings(data.listings)
+                setTotal(data.total)
+                setTotalPages(data.totalPages)
+                setPage(newPage)
+                setStatus(newStatus)
+
+                const newSearchParams = new URLSearchParams(searchParams.toString())
+                newSearchParams.set("page", newPage.toString())
+                if (newStatus === "all") {
+                    newSearchParams.delete("status")
+                } else {
+                    newSearchParams.set("status", newStatus)
+                }
+                router.push(`/dashboard?${newSearchParams.toString()}`)
+            }
+        } catch (error) {
+            console.error("Failed to fetch listings:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleStatusChange = async (listingId: number, newStatus: string) => {
+        try {
+            const response = await fetch(`/api/listings/${listingId}/status`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status: newStatus }),
+            })
+
+            if (response.ok) {
+                const updatedListing = await response.json()
+                setListings((prev) => prev ? prev.map((listing) => (listing.id === listingId ? updatedListing : listing)) : prev)
+            } else {
+                console.error("Failed to update listing status")
+            }
+        } catch (error) {
+            console.error("Failed to update listing status:", error)
+        }
+    }
+
+    const handleEditListing = async (updatedData: Partial<Listing>) => {
+        if (!editingListing) return
+
+        try {
+            const response = await fetch(`/api/listings/${editingListing.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedData),
+            })
+
+            if (response.ok) {
+                const updatedListing = await response.json()
+                setListings((prev) => prev ? prev.map((listing) => (listing.id === editingListing.id ? updatedListing : listing)) : prev)
+                setEditingListing(null)
+            } else {
+                console.error("Failed to update listing")
+            }
+        } catch (error) {
+            console.error("Failed to update listing:", error)
+        }
+    }
+
+    const fetchAuditLogs = async () => {
+        try {
+            const response = await fetch("/api/audit-logs")
+            if (response.ok) {
+                const data = await response.json()
+                setAuditLogs(data.logs)
+            }
+        } catch (error) {
+            console.error("Failed to fetch audit logs:", error)
+        }
+    }
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -179,7 +268,7 @@ export default function DashboardHome({
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Car</TableHead>
-                                            {/* <TableHead>Title</TableHead> */}
+                                            <TableHead>Title</TableHead>
                                             <TableHead>Location</TableHead>
                                             <TableHead>Price/Day</TableHead>
                                             <TableHead>Status</TableHead>
@@ -200,19 +289,19 @@ export default function DashboardHome({
                                                             height={40}
                                                             className="rounded object-cover"
                                                         />
-                                                        <div>
+                                                        {/* <div>
                                                             <div className="font-medium">
                                                                 {listing.car_year} {listing.car_make} {listing.car_model}
                                                             </div>
-                                                        </div>
+                                                        </div> */}
                                                     </div>
                                                 </TableCell>
-                                                {/* <TableCell>
+                                                <TableCell>
                                                     <div className="max-w-xs">
                                                         <div className="font-medium truncate">{listing.title}</div>
                                                         <div className="text-sm text-gray-500 truncate">{listing.description}</div>
                                                     </div>
-                                                </TableCell> */}
+                                                </TableCell>
                                                 <TableCell>{listing.location}</TableCell>
                                                 <TableCell>${listing.price_per_day}</TableCell>
                                                 <TableCell>{getStatusBadge(listing.status)}</TableCell>
